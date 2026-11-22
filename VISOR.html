@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>VISOR — рабочее место технолога</title>
+<style>
+:root{--nav:#111c2e;--nav-text:#aab8cd;--ink:#152238;--muted:#53647d;--quiet:#697a92;--page:#f2f5f9;--surface:#fff;--line:#e0e7f0;--blue:#2458e6;--blue-dark:#1946c4;--blue-bg:#eaf0ff;--green:#087451;--green-bg:#e4f5ed;--amber:#8b5209;--amber-bg:#fff1d9;--gray:#596980;--gray-bg:#edf1f6;--red:#ac3140;--radius:13px;--shadow:0 2px 5px #25385906;--sidebar:245px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 Inter,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.5}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #6d98ff;outline-offset:3px}
+button{color:inherit}
+a{color:var(--blue-dark)}
+h1,h2,h3,p{margin:0}
+svg.icon{width:19px;height:19px;display:inline-block;flex:none;vertical-align:middle}
+.shell{min-height:100vh}
+.sidebar{z-index:4;position:fixed;inset:0 auto 0 0;width:var(--sidebar);display:flex;flex-direction:column;background:var(--nav);color:#fff;padding:26px 16px 18px}
+.brand{display:flex;align-items:center;gap:11px;margin:0 7px 42px;text-align:left;border:0;padding:0;color:#fff;background:none;align-self:flex-start}
+.brand-mark{display:grid;place-items:center;width:37px;height:37px;border-radius:10px;background:#3264ed;color:#fff}
+.brand-mark .icon{width:23px;height:23px}
+.wordmark{display:block;font-size:21px;font-weight:800;letter-spacing:.115em;line-height:1.1}
+.brand-sub{display:block;color:var(--nav-text);font-size:10px;font-weight:600;letter-spacing:.045em;margin-top:4px;white-space:nowrap}
+.nav-label{margin:0 10px 10px;color:#8596b1;font-size:11px;font-weight:700;letter-spacing:.105em;text-transform:uppercase}
+.nav-list{display:grid;grid-template-columns:minmax(0,1fr);gap:5px}
+.nav-btn{border:0;background:transparent;border-radius:8px;color:var(--nav-text);display:flex;align-items:center;gap:11px;padding:11px 10px;width:100%;text-align:left;font-weight:600;font-size:13px}
+.nav-btn:hover{background:#1c2a43;color:white}
+.nav-btn[aria-current="page"]{background:#233961;color:#f5f8ff}
+.nav-btn[aria-current="page"] .icon{color:#91afff}
+.profile{margin-top:auto;border-top:1px solid #293449;padding:16px 7px 0;display:flex;gap:10px;align-items:center}
+.avatar{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:9px;background:#2b3e63;color:#c6d7ff;font-weight:750;font-size:13px}
+.profile b,.profile small{display:block}
+.profile b{font-size:13px}
+.profile small{color:var(--nav-text);font-size:11px}
+.workspace{margin-left:var(--sidebar)}
+.topbar{height:64px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 30px}
+.crumb,.header-end,.header-icon{display:flex;align-items:center;gap:9px}
+.crumb{color:var(--muted);font-size:13px}
+.crumb strong{color:var(--ink)}
+.crumb .icon{width:16px;height:16px}
+.divider{color:#a0aec3}
+.header-end{gap:15px}
+.shift{font-size:13px;color:var(--muted)}
+.demo{display:inline-flex;align-items:center;gap:7px;background:#edf2ff;color:#2a4eaa;border:1px solid #dde7ff;border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700;white-space:nowrap}
+.demo:hover{background:#dfe9ff}
+.demo .icon{width:15px;height:15px}
+.icon-btn.mobile-nav{display:none}
+.wrap{max-width:1540px;margin:0 auto;padding:27px 30px 30px}
+.heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:23px}
+h1{font-size:clamp(26px,3vw,34px);line-height:1.12;font-weight:770;letter-spacing:-.045em}
+.heading p{color:var(--muted);margin-top:7px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);min-height:39px;border-radius:8px;font-weight:700;padding:8px 12px;font-size:13px;white-space:nowrap}
+.btn:hover:not(:disabled){background:#f3f6fb;border-color:#c6d3e5}
+.btn.primary{background:var(--blue);color:white;border-color:var(--blue);box-shadow:0 2px 4px #2458e62b}
+.btn.primary:hover:not(:disabled){background:var(--blue-dark);border-color:var(--blue-dark)}
+.btn .icon{width:16px;height:16px}
+.btn.danger{color:var(--red)}
+.link{border:0;background:none;color:var(--blue-dark);font-weight:700;padding:0;text-align:left}
+.link:hover{text-decoration:underline}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.stat,.panel,.product{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stat{text-align:left;display:flex;gap:12px;align-items:center;padding:15px 14px;min-height:87px}
+.stat:hover,.product:hover{border-color:#a9bbee}
+.stat-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:10px;flex:none}
+.stat-icon .icon{width:20px;height:20px}
+.stat-icon.blue,.badge.blue{color:#244fb8;background:var(--blue-bg)}
+.stat-icon.green,.badge.green{color:var(--green);background:var(--green-bg)}
+.stat-icon.amber,.badge.amber{color:var(--amber);background:var(--amber-bg)}
+.stat-icon.gray,.badge.gray{color:var(--gray);background:var(--gray-bg)}
+.stat strong{display:block;font-size:25px;line-height:1.12;letter-spacing:-.04em}
+.stat small{display:block;color:var(--muted);font-size:13px;font-weight:600;margin-top:3px}
+.stat small.fraction{display:inline;font-weight:600;font-size:14px;margin-left:2px;color:var(--quiet)}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.93fr) minmax(255px,1fr);gap:17px;margin-bottom:20px;align-items:stretch}
+.panel{min-width:0}
+.panel-head{padding:15px 17px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.panel-head h2{font-size:17px;font-weight:750;line-height:1.2;letter-spacing:-.02em}
+.panel-head .link{font-size:13px;white-space:nowrap}
+.panel-head small{margin-top:5px;display:block;color:var(--muted);font-size:12px}
+.machine-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:0 16px 16px}
+.machine-grid.full{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));padding:16px}
+.machine{display:block;text-align:left;border:1px solid var(--line);background:#fbfcfe;border-radius:10px;padding:12px 11px;width:100%;min-width:0}
+.machine:hover{background:#f6f8ff;border-color:#a9bbee}
+.machine-top{display:flex;align-items:center;gap:8px;min-width:0}
+.machine-icon,.item-icon{display:grid;place-items:center;width:32px;height:32px;flex:none;background:#edf2fc;color:#436399;border-radius:8px}
+.machine-top strong{font-size:14px;display:block;line-height:1.15}
+.machine-top small{color:var(--muted);font-size:11px;display:block;margin-top:3px}
+.machine-top .badge{margin-left:auto}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:3px 6px;font-size:12px;font-weight:750;line-height:1.3;white-space:nowrap}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.machine-info{margin-top:10px;font-size:12px;font-weight:660;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.machine-info.muted{font-weight:540}
+.machine-bottom{margin-top:6px;min-height:17px}
+.machine-bottom small{font-size:11px;color:var(--quiet)}
+.progress{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:730;white-space:nowrap}
+.progress-track{height:5px;flex:1;min-width:25px;background:#e2e9f4;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;background:#3970ee}
+.progress-fill.complete{background:#24a779}
+.activity{list-style:none;margin:0;padding:0 17px 7px}
+.activity li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:9px;align-items:start;padding:12px 0;border-top:1px solid #edf1f6}
+.event-icon{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;background:#edf2ff;color:#3860c5}
+.event-icon .icon{width:15px;height:15px}
+.activity b{display:block;font-size:12px;line-height:1.3}
+.activity small,.activity time{color:var(--quiet);font-size:11px;display:block;margin-top:3px}
+.activity small{overflow-wrap:anywhere}
+.activity time{white-space:nowrap;margin-top:0}
+.scroller{overflow:auto}
+table{border-collapse:collapse;width:100%;text-align:left;white-space:nowrap}
+thead{background:#f7f9fc}
+th{color:var(--muted);font-size:11px;letter-spacing:.035em;font-weight:730;text-transform:uppercase}
+th,td{padding:11px 15px;border-top:1px solid var(--line)}
+td{font-size:14px}
+td b{font-size:14px}
+td small{display:block;color:var(--quiet);font-size:11px;margin-top:2px}
+tr:hover td{background:#fbfcff}
+tr:last-child td:first-child{border-bottom-left-radius:var(--radius)}
+tr:last-child td:last-child{border-bottom-right-radius:var(--radius)}
+.code{font-family:"SFMono-Regular",Consolas,monospace;font-size:12px}
+.priority{display:inline-flex;align-items:center;gap:6px;font-size:12px}
+.priority.high{color:var(--amber);font-weight:700}
+.priority .icon{width:13px;height:13px}
+.icon-btn{display:inline-grid;place-items:center;background:#fff;border:1px solid var(--line);border-radius:7px;width:30px;height:28px;color:var(--muted)}
+.icon-btn:hover{color:var(--blue-dark);border-color:#a9bbee;background:#f2f6ff}
+.icon-btn .icon{width:16px;height:16px}
+.muted{color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--line)}
+.filters+div thead th{border-top:0}
+.search{display:flex;align-items:center;gap:8px;color:var(--quiet);min-width:min(100%,245px)}
+.search .icon{width:17px;height:17px}
+.search input{width:100%;background:none;border:0;padding:0;outline:none}
+.search:focus-within{outline:2px solid #6d98ff}
+.search input:focus-visible{outline:none}
+.search,.field-input,select{height:38px;border:1px solid #d6e0ed;border-radius:8px;background:#fff;color:var(--ink);padding:7px 9px;font-size:13px}
+select{appearance:none;padding-right:28px;background-repeat:no-repeat;background-position:right 9px center;background-size:12px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2353647d' stroke-width='1.7'%3E%3Cpath d='m3 6 5 5 5-5'/%3E%3C/svg%3E")}
+.filter-caption{margin-left:auto;font-size:12px;color:var(--quiet)}
+.empty{padding:32px 16px;color:var(--muted);text-align:center;font-size:14px}
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,242px),1fr));gap:14px}
+.product{display:block;text-align:left;padding:16px;width:100%}
+.product h2{font-size:16px;margin:11px 0 2px}
+.product p{font-size:12px;color:var(--muted);margin-bottom:15px}
+.product-meta{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:12px;color:var(--muted);font-size:12px}
+.product-filters{padding:0;border:0;margin-bottom:14px}
+.detail-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.detail-top .icon-btn{width:34px;height:34px}
+.detail-top h1{font-size:29px}
+.detail-data{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:14px;padding:0 17px 16px}
+.detail-data strong,.detail-data span,.detail-data button{display:block}
+.detail-data span{color:var(--muted);font-size:12px;margin-bottom:3px}
+.detail-data strong,.detail-data button{font-size:14px}
+.detail-data .code{overflow-wrap:anywhere}
+.detail-panel{margin-bottom:16px}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding:13px 17px}
+.detail-progress{margin:0 17px 15px}
+dialog{width:min(535px,calc(100% - 28px));border:1px solid #d6e0ee;border-radius:15px;background:white;color:var(--ink);padding:0;box-shadow:0 18px 70px #0a173a35}
+dialog::backdrop{background:#101d3c8a}
+.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:19px 19px 13px}
+.dialog-head h2{font-size:20px;letter-spacing:-.025em}
+.dialog-head p{color:var(--muted);font-size:13px;margin-top:4px}
+.dialog-body{display:grid;gap:12px;padding:4px 19px 17px}
+.dialog-actions{display:flex;gap:8px;justify-content:flex-end;padding:13px 19px;border-top:1px solid var(--line)}
+.field{display:grid;gap:5px;font-size:13px;font-weight:700}
+.field input,.field select{width:100%;font-weight:500}
+.field input[type=file]{min-height:39px;height:auto}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.notice{padding:10px 11px;border-radius:8px;background:#edf3ff;color:#234780;font-size:13px;overflow-wrap:anywhere}
+.toast{position:fixed;z-index:9;bottom:20px;right:20px;max-width:calc(100% - 40px);padding:11px 15px;background:#152944;color:white;box-shadow:0 8px 28px #0b193e32;border-radius:10px;font-size:14px;font-weight:650}
+.toast[hidden]{display:none}
+@media(max-width:1220px){:root{--sidebar:205px}.sidebar{padding-left:12px;padding-right:12px}.wrap,.topbar{padding-left:22px;padding-right:22px}.machine-top{gap:6px}.machine-icon{width:27px;height:29px}.machine-icon .icon{width:17px;height:17px}}
+@media(max-width:1030px){.dashboard-grid{grid-template-columns:minmax(0,1fr)}.activity{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:15px}.stat{gap:8px;padding:12px 8px}.stat-icon{width:32px;height:32px}.stat small{font-size:11px}}
+@media(max-width:760px){:root{--sidebar:0px}.sidebar{display:none}.sidebar.open{display:flex;width:235px;top:52px;box-shadow:12px 0 20px #0e1b2b32}.topbar{height:52px;padding:0 12px}.icon-btn.mobile-nav{display:inline-grid;margin-right:1px}.crumb>.icon,.shift{display:none}.crumb{gap:5px}.wrap{padding:16px 12px}.heading{margin-bottom:15px}.heading p{font-size:13px}.heading .btn{gap:4px;padding:6px 8px}.stats{gap:7px;margin-bottom:13px}.stat{min-height:69px;padding:7px}.stat strong{font-size:21px}.stat-icon{display:none}.stat small{line-height:1.2}.dashboard-grid{gap:12px;margin-bottom:13px}.panel-head{padding:13px}.machine-grid{padding:0 11px 11px}.activity{padding:0 11px 7px}.detail-top h1{font-size:23px}}
+@media(max-width:420px){.heading{align-items:flex-start;flex-direction:column}.machine-grid,.activity{grid-template-columns:1fr}.machine-grid.full{padding:11px}.filter-caption{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <button class="brand" data-go="overview" aria-label="VISOR, обзор">
+      <span class="brand-mark" id="brand-icon"></span>
+      <span><span class="wordmark">VISOR</span><span class="brand-sub">Управление производством</span></span>
+    </button>
+    <div class="nav-label">Рабочее место</div>
+    <nav class="nav-list" id="nav" aria-label="Разделы системы"></nav>
+    <div class="profile"><span class="avatar" aria-hidden="true">Т</span><div><b>Технолог</b><small>Производственный участок</small></div></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <div class="crumb"><button class="icon-btn mobile-nav" id="mobile-menu" aria-expanded="false" aria-label="Открыть меню"></button><span id="crumb-icon"></span><span>Участок ЧПУ</span><span class="divider">/</span><strong id="crumb-page">Обзор</strong></div>
+      <div class="header-end"><span class="shift">Смена 1</span><button class="demo" data-action="demo" id="demo-button"></button></div>
+    </header>
+    <main class="wrap" id="main"></main>
+  </div>
+</div>
+<dialog id="dialog"></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>
+'use strict';
+
+const icons = {
+  brand:'<path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/><circle cx="12" cy="12" r="3"/>',
+  home:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.3"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.3"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.3"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.3"/>',
+  list:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6m-6 4h6m-6 4h4"/>',
+  cube:'<path d="M12 3 3.8 7.5v9L12 21l8.2-4.5v-9L12 3Z"/><path d="m3.8 7.5 8.2 4.6 8.2-4.6M12 12.1V21m-4-15.8 8.2 4.6"/>',
+  file:'<path d="M7 3.5h7l4 4v12a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19.5V5a1.5 1.5 0 0 1 1-1.5Z"/><path d="M14 3.5V8h4m-8 4-1.5 1.5 1.5 1.5m4-3 1.5 1.5L14 15"/>',
+  machine:'<rect x="3" y="4" width="18" height="15" rx="2"/><path d="M3 15h18m-8-11v11m-5-8v5m-2 0h4m6-4h2m-2 3h2M6 19v2m12-2v2"/>',
+  history:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  monitor:'<rect x="3" y="4" width="18" height="14" rx="2"/><path d="m6 12 3-3 3 4 2-3h4m-6 8v3m-4 0h8"/>',
+  queue:'<path d="M9 6h11M9 12h11M9 18h7M4 6h.1M4 12h.1M4 18h.1"/>',
+  check:'<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  offline:'<path d="M4 9c1-.8 2.1-1.5 3.4-1.9M20 9a12.8 12.8 0 0 0-8-2.8m-5 6.3a8 8 0 0 1 2.3-1.2m7.7 1.2a8.2 8.2 0 0 0-3.4-1.6m-4 5.2a3.7 3.7 0 0 1 4.8 0M12 19.5h.01M4 4l16 16"/>',
+  send:'<path d="M12 15V4m-4 4 4-4 4 4M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/>',
+  activity:'<path d="M3 12h4l3-6 4 12 3-6h4"/>',
+  flag:'<path d="M5 21V4m0 1c5-4 9 3 14 0v9c-5 3-9-4-14 0"/>',
+  chevron:'<path d="m9 6 6 6-6 6"/>',
+  back:'<path d="m14 6-6 6 6 6"/>',
+  close:'<path d="m6 6 12 12M18 6 6 18"/>',
+  search:'<circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/>',
+  flask:'<path d="M9 3h6m-5 0v7l-5 8a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-8V3m-6 13h8"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  area:'<path d="M3 20h18V9l-6 3V8l-5 3V6H5L3 20Zm5-4h1m4 0h1m4 0h1"/>'
+};
+
+function icon(name) {
+  return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">' + icons[name] + '</svg>';
+}
+
+const sections = {
+  overview:['Обзор','home'],
+  jobs:['Очередь заданий','list'],
+  products:['Изделия','cube'],
+  programs:['Управляющие программы','file'],
+  machines:['Карта станков','machine'],
+  journal:['Журнал передач','history']
+};
+const products = [
+  {id:'ИЗ-014',name:'Корпус привода',parts:[{id:'ДТ-014.01',name:'Плита основания',program:'УП-014'},{id:'ДТ-014.02',name:'Крышка корпуса',program:'УП-017'}]},
+  {id:'ИЗ-021',name:'Опорный кронштейн',parts:[{id:'ДТ-021.01',name:'Кронштейн монтажный',program:'УП-021'},{id:'ДТ-021.02',name:'Проставка',program:'УП-022'}]},
+  {id:'ИЗ-032',name:'Фланцевый узел',parts:[{id:'ДТ-032.01',name:'Фланец ДУ-80',program:'УП-032'}]}
+];
+const machines = [
+  {id:'ЧПУ-01',type:'Фрезерный',online:true},
+  {id:'ЧПУ-02',type:'Токарный',online:true},
+  {id:'ЧПУ-03',type:'Фрезерный',online:true},
+  {id:'ЧПУ-04',type:'Фрезерный',online:false}
+];
+const jobStates = {queued:['В очереди','amber'],assigned:['УП передана','blue'],running:['В работе','blue'],done:['Выполнено','green']};
+const machineStates = {running:['В работе','blue'],ready:['Свободен','green'],reserved:['УП передана','amber'],offline:['Нет связи','gray']};
+const demoDate = '2026-11-20';
+const storageKey = 'visor-prototype-1';
+const main = document.querySelector('#main');
+const dialog = document.querySelector('#dialog');
+const toast = document.querySelector('#toast');
+let toastTimer;
+let route = {page:'overview',id:null};
+let filters = {query:'',state:''};
+
+function demoData() {
+  const programs = [
+    {id:'УП-014',versions:[{number:2,file:'plita_osnovaniya_v2.nc',date:demoDate,size:18240},{number:1,file:'plita_osnovaniya_v1.nc',date:'2026-11-19',size:17953}]},
+    {id:'УП-017',versions:[{number:1,file:'kryshka_korpusa_v1.nc',date:demoDate,size:12654}]},
+    {id:'УП-021',versions:[{number:3,file:'kronshteyn_v3.nc',date:demoDate,size:21328},{number:2,file:'kronshteyn_v2.nc',date:'2026-11-19',size:19313}]},
+    {id:'УП-022',versions:[{number:1,file:'prostavka_v1.nc',date:'2026-11-19',size:8394}]},
+    {id:'УП-032',versions:[{number:1,file:'flanets_du80_v1.tap',date:demoDate,size:15423}]}
+  ];
+  const jobs = [
+    {id:'ПЗ-024',part:'ДТ-014.01',program:'УП-014',version:2,qty:25,done:17,priority:'high',due:demoDate,state:'running',machine:'ЧПУ-01'},
+    {id:'ПЗ-025',part:'ДТ-032.01',program:'УП-032',version:1,qty:20,done:9,priority:'normal',due:demoDate,state:'running',machine:'ЧПУ-02'},
+    {id:'ПЗ-026',part:'ДТ-021.01',program:'УП-021',version:3,qty:12,done:0,priority:'high',due:demoDate,state:'queued',machine:null},
+    {id:'ПЗ-027',part:'ДТ-014.02',program:'УП-017',version:1,qty:25,done:0,priority:'normal',due:'2026-11-21',state:'queued',machine:null},
+    {id:'ПЗ-023',part:'ДТ-021.02',program:'УП-022',version:1,qty:12,done:12,priority:'normal',due:demoDate,state:'done',machine:'ЧПУ-03'}
+  ];
+  return {
+    programs, jobs,
+    transfers:[
+      {job:'ПЗ-025',machine:'ЧПУ-02',program:'УП-032',version:1,file:'flanets_du80_v1.tap',at:demoDate+'T10:08:00'},
+      {job:'ПЗ-024',machine:'ЧПУ-01',program:'УП-014',version:2,file:'plita_osnovaniya_v2.nc',at:demoDate+'T09:18:00'},
+      {job:'ПЗ-023',machine:'ЧПУ-03',program:'УП-022',version:1,file:'prostavka_v1.nc',at:demoDate+'T08:29:00'}
+    ],
+    activity:[
+      {icon:'send',title:'Передана управляющая программа',detail:'ПЗ-025 · ЧПУ-02 · версия 1',at:demoDate+'T10:08:00'},
+      {icon:'check',title:'Задание выполнено',detail:'ПЗ-023 · Проставка · 12 из 12 шт.',at:demoDate+'T09:54:00'},
+      {icon:'send',title:'Передана управляющая программа',detail:'ПЗ-024 · ЧПУ-01 · версия 2',at:demoDate+'T09:18:00'},
+      {icon:'offline',title:'Нет связи со станком',detail:'ЧПУ-04 · Фрезерный',at:demoDate+'T09:02:00'}
+    ]
+  };
+}
+
+function load() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (saved && ['jobs','programs','transfers','activity'].every(key => Array.isArray(saved[key]))) return saved;
+  } catch {}
+  return demoData();
+}
+let data = load();
+
+function save() {
+  try { localStorage.setItem(storageKey,JSON.stringify(data)); } catch {}
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g,character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+}
+
+function localDateTime() {
+  const now = new Date();
+  return new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,19);
+}
+
+function dateLabel(value) {
+  const [year,month,day] = value.slice(0,10).split('-');
+  return day+'.'+month+'.'+year;
+}
+
+function stamp(value) {
+  return dateLabel(value)+' · '+value.slice(11,16);
+}
+
+function findPart(id) {
+  for (const product of products) {
+    const part = product.parts.find(item => item.id === id);
+    if (part) return {...part,product};
+  }
+}
+
+function programById(id) {
+  return data.programs.find(program => program.id === id);
+}
+
+function versionOf(id,number) {
+  return programById(id).versions.find(version => version.number === number);
+}
+
+function partByProgram(id) {
+  return products.flatMap(product => product.parts).find(part => part.program === id);
+}
+
+function activeJob(machineId) {
+  return data.jobs.find(job => job.machine === machineId && ['assigned','running'].includes(job.state));
+}
+
+function stateOf(machine) {
+  if (!machine.online) return 'offline';
+  const job = activeJob(machine.id);
+  if (!job) return 'ready';
+  return job.state === 'assigned' ? 'reserved' : 'running';
+}
+
+function percent(done,total) {
+  return total ? Math.floor(done * 100 / total) : 0;
+}
+
+function partProgress(partId) {
+  const jobs = data.jobs.filter(job => job.part === partId);
+  return {done:jobs.reduce((sum,job)=>sum+job.done,0),total:jobs.reduce((sum,job)=>sum+job.qty,0)};
+}
+
+function productProgress(product) {
+  return product.parts.map(part => partProgress(part.id)).reduce((all,item)=>({done:all.done+item.done,total:all.total+item.total}),{done:0,total:0});
+}
+
+function badge([label,color]) {
+  return '<span class="badge '+color+'"><i class="dot" aria-hidden="true"></i>'+label+'</span>';
+}
+
+function progress(label,done,total) {
+  const value = percent(done,total);
+  return '<div class="progress"><div class="progress-track" role="progressbar" aria-label="'+esc(label)+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+value+'"><div class="progress-fill '+(value===100?'complete':'')+'" style="width:'+value+'%"></div></div><span>'+value+'%</span></div>';
+}
+
+function goButton(label,page,id='',style='link') {
+  return '<button class="'+style+'" data-go="'+page+'" data-id="'+esc(id)+'">'+esc(label)+'</button>';
+}
+
+function actionButton(label,action,id='',symbol='',style='btn') {
+  return '<button class="'+style+'" data-action="'+action+'" data-id="'+esc(id)+'">'+(symbol ? icon(symbol) : '')+esc(label)+'</button>';
+}
+
+function heading(title,description,action='') {
+  return '<div class="heading"><div><h1>'+title+'</h1><p>'+description+'</p></div>'+action+'</div>';
+}
+
+function panelHeading(title,action='',subtitle='') {
+  return '<div class="panel-head"><div><h2>'+title+'</h2>'+(subtitle?'<small>'+subtitle+'</small>':'')+'</div>'+action+'</div>';
+}
+
+function filterBar(placeholder,states,label='Все статусы') {
+  const select = states ? '<select id="state-filter" aria-label="'+label+'"><option value="">'+label+'</option>'+Object.entries(states).map(([key,[name]])=>'<option value="'+key+'" '+(filters.state===key?'selected':'')+'>'+name+'</option>').join('')+'</select>' : '';
+  return '<div class="filters '+(!states&&route.page==='products'?'product-filters':'')+'"><label class="search">'+icon('search')+'<input id="query-filter" type="search" aria-label="'+placeholder+'" placeholder="'+placeholder+'" value="'+esc(filters.query)+'"></label>'+select+'<span id="count" class="filter-caption"></span></div>';
+}
+
+function matches(values) {
+  const query = filters.query.trim().toLocaleLowerCase('ru');
+  return values.some(value => String(value ?? '').toLocaleLowerCase('ru').includes(query));
+}
+
+function setCount(count) {
+  const caption = document.querySelector('#count');
+  if (caption) caption.textContent = 'Найдено '+count;
+}
+
+function empty(text) {
+  return '<p class="empty">'+text+'</p>';
+}
+
+function stat(label,value,symbol,color,page,filter='',suffix='') {
+  return '<button class="stat" data-go="'+page+'" data-filter="'+filter+'"><span class="stat-icon '+color+'">'+icon(symbol)+'</span><span><strong>'+value+(suffix?'<small class="fraction"> / '+suffix+'</small>':'')+'</strong><small>'+label+'</small></span></button>';
+}
+
+function machineTile(machine) {
+  const job = activeJob(machine.id);
+  const state = stateOf(machine);
+  const description = job ? findPart(job.part).name : (machine.online ? 'Ожидает задания' : 'Показания недоступны');
+  const bottom = job && state==='running' ? progress('Выполнение задания '+job.id,job.done,job.qty) : '<small>'+(job?job.id+' · Ожидает обработки':machine.online?'Доступен для передачи УП':'Связь с ПК станка отсутствует')+'</small>';
+  return '<button class="machine" data-go="machines" data-id="'+machine.id+'"><span class="machine-top"><span class="machine-icon">'+icon('machine')+'</span><span><strong>'+machine.id+'</strong><small>'+machine.type+'</small></span>'+badge(machineStates[state])+'</span><div class="machine-info '+(job?'':'muted')+'">'+description+'</div><div class="machine-bottom">'+bottom+'</div></button>';
+}
+
+function activityList() {
+  return '<ol class="activity">'+data.activity.slice(0,4).map(event=>'<li><span class="event-icon">'+icon(event.icon)+'</span><div><b>'+esc(event.title)+'</b><small>'+esc(event.detail)+'</small></div><time datetime="'+event.at+'" title="'+stamp(event.at)+'">'+event.at.slice(11,16)+'</time></li>').join('')+'</ol>';
+}
+
+function queueSort(a,b) {
+  return Number(b.priority==='high')-Number(a.priority==='high') || a.due.localeCompare(b.due) || a.id.localeCompare(b.id);
+}
+
+function jobsTable(jobs) {
+  if (!jobs.length) return empty('Задания не найдены.');
+  return '<div class="scroller"><table><thead><tr><th>Задание</th><th>Изделие / деталь</th><th>Приоритет</th><th>Срок</th><th>Станок</th><th>Статус</th><th aria-label="Открыть"></th></tr></thead><tbody>'+
+    jobs.map(job=>{
+      const part = findPart(job.part);
+      return '<tr><td>'+goButton(job.id,'jobs',job.id)+'<small>'+job.qty+' шт.</small></td><td><b>'+part.name+'</b><small>'+part.product.name+'</small></td><td><span class="priority '+job.priority+'">'+(job.priority==='high'?icon('flag')+'Высокий':'Обычный')+'</span></td><td>'+dateLabel(job.due)+'</td><td>'+(job.machine?goButton(job.machine,'machines',job.machine):'<span class="muted">—</span>')+'</td><td>'+badge(jobStates[job.state])+'</td><td><button class="icon-btn" data-go="jobs" data-id="'+job.id+'" aria-label="Открыть '+job.id+'">'+icon('chevron')+'</button></td></tr>';
+    }).join('')+'</tbody></table></div>';
+}
+
+function showOverview() {
+  const waiting = data.jobs.filter(job=>job.state==='queued'||job.state==='assigned').sort(queueSort);
+  return heading('Производственный участок','Станки, очередь заданий и ход выполнения работ.',actionButton('Новое задание','new-job','','plus','btn primary'))+
+  '<div class="stats">'+
+  stat('Станки в работе',machines.filter(machine=>stateOf(machine)==='running').length,'monitor','blue','machines','running',machines.length)+
+  stat('В очереди',data.jobs.filter(job=>job.state==='queued').length,'queue','amber','jobs','queued')+
+  stat('Выполнено за смену',data.jobs.filter(job=>job.state==='done').length,'check','green','jobs','done')+
+  stat('Станки без связи',machines.filter(machine=>!machine.online).length,'offline','gray','machines','offline')+'</div>'+
+  '<div class="dashboard-grid"><section class="panel">'+panelHeading('Карта станков',goButton('Все станки','machines'))+
+  '<div class="machine-grid">'+machines.map(machineTile).join('')+'</div></section>'+
+  '<section class="panel">'+panelHeading('События смены')+activityList()+'</section></div>'+
+  '<section class="panel">'+panelHeading('Очередь заданий',goButton('Все задания','jobs'))+jobsTable(waiting.slice(0,4))+'</section>';
+}
+
+function showJobs() {
+  return heading('Очередь заданий','Партии деталей, сроки и ход выполнения.',actionButton('Новое задание','new-job','','plus','btn primary'))+
+   '<section class="panel">'+filterBar('Поиск по заданию, изделию или детали',jobStates)+'<div id="results"></div></section>';
+}
+
+function showProducts() {
+  return heading('Изделия','Состав изделий, связанные программы и выпуск деталей.')+
+  filterBar('Поиск по изделию или детали')+'<div id="results"></div>';
+}
+
+function productTiles(items) {
+  if (!items.length) return empty('Изделия не найдены.');
+  return '<div class="tile-grid">'+items.map(product=>{
+    const count = productProgress(product);
+    return '<button class="product" data-go="products" data-id="'+product.id+'"><span class="item-icon">'+icon('cube')+'</span><h2>'+product.name+'</h2><p class="code">'+product.id+'</p>'+progress('Выпуск деталей',count.done,count.total)+'<div class="product-meta"><span>Позиций в составе: '+product.parts.length+'</span><span>'+count.done+' из '+count.total+' шт.</span></div></button>';
+  }).join('')+'</div>';
+}
+
+function showPrograms() {
+  return heading('Управляющие программы','Файлы УП и их версии по деталям.')+
+  '<section class="panel">'+filterBar('Поиск по УП, файлу или детали')+'<div id="results"></div></section>';
+}
+
+function programsTable(items) {
+  if (!items.length) return empty('Программы не найдены.');
+  return '<div class="scroller"><table><thead><tr><th>УП / файл</th><th>Деталь</th><th>Последняя версия</th><th>Дата</th><th aria-label="Открыть"></th></tr></thead><tbody>'+items.map(program=>{
+    const version = program.versions[0];
+    const part = partByProgram(program.id);
+    return '<tr><td>'+goButton(program.id,'programs',program.id)+'<small class="code">'+esc(version.file)+'</small></td><td><b>'+part.name+'</b><small>'+part.id+'</small></td><td>Версия '+version.number+'</td><td>'+dateLabel(version.date)+'</td><td><button class="icon-btn" data-go="programs" data-id="'+program.id+'" aria-label="Открыть '+program.id+'">'+icon('chevron')+'</button></td></tr>';
+  }).join('')+'</tbody></table></div>';
+}
+
+function showMachines() {
+  return heading('Карта станков','Связь с ПК станка, текущие задания и выполненное количество.')+
+  '<section class="panel">'+filterBar('Поиск по станку или детали',machineStates)+'<div id="results"></div></section>';
+}
+
+function showJournal() {
+  return heading('Журнал передач','Какая версия УП передана, для какого задания и на какой станок.')+
+  '<section class="panel">'+filterBar('Поиск по заданию, станку или файлу')+'<div id="results"></div></section>';
+}
+
+function journalTable(items) {
+  if (!items.length) return empty('Передачи не найдены.');
+  return '<div class="scroller"><table><thead><tr><th>Дата и время</th><th>Задание</th><th>Станок</th><th>Файл</th><th>Версия</th><th>Результат</th></tr></thead><tbody>'+items.map(item=>
+    '<tr><td>'+stamp(item.at)+'</td><td>'+goButton(item.job,'jobs',item.job)+'</td><td>'+goButton(item.machine,'machines',item.machine)+'</td><td class="code">'+esc(item.file)+'</td><td>'+goButton('Версия '+item.version,'programs',item.program)+'</td><td>'+badge(['Передано · демо','green'])+'</td></tr>'
+  ).join('')+'</tbody></table></div>';
+}
+
+function renderResults() {
+  const container = document.querySelector('#results');
+  if (!container) return;
+  let result;
+  let content;
+  switch (route.page) {
+    case 'jobs':
+      result = data.jobs.filter(job=>{
+        const part = findPart(job.part);
+        return (!filters.state || job.state===filters.state) && matches([job.id,part.name,part.product.name,job.machine]);
+      }).sort(queueSort);
+      content = jobsTable(result);
+      break;
+    case 'products':
+      result = products.filter(product=>matches([product.id,product.name,...product.parts.flatMap(part=>[part.id,part.name])]));
+      content = productTiles(result);
+      break;
+    case 'programs':
+      result = data.programs.filter(program=>matches([program.id,partByProgram(program.id).name,...program.versions.map(version=>version.file)]));
+      content = programsTable(result);
+      break;
+    case 'machines':
+      result = machines.filter(machine=>{
+        const job = activeJob(machine.id);
+        return (!filters.state || stateOf(machine)===filters.state) && matches([machine.id,machine.type,job&&findPart(job.part).name]);
+      });
+      content = result.length ? '<div class="machine-grid full">'+result.map(machineTile).join('')+'</div>' : empty('Станки не найдены.');
+      break;
+    case 'journal':
+      result = data.transfers.filter(item=>matches([item.job,item.machine,item.file,item.program]));
+      content = journalTable(result);
+      break;
+  }
+  container.innerHTML = content;
+  setCount(result.length);
+}
+
+function detailHeading(page,title,tag='') {
+  return '<div class="detail-top"><button class="icon-btn" data-go="'+page+'" aria-label="Вернуться в раздел">'+icon('back')+'</button><h1>'+title+'</h1>'+tag+'</div>';
+}
+
+function datum(label,value) {
+  return '<div><span>'+label+'</span>'+value+'</div>';
+}
+
+function showJob(id) {
+  const job = data.jobs.find(item=>item.id===id);
+  if (!job) return showJobs();
+  const part = findPart(job.part);
+  const version = versionOf(job.program,job.version);
+  const action = {
+    queued: actionButton('Передать УП','assign',job.id,'send','btn primary'),
+    assigned: actionButton('Имитировать начало обработки','simulate-start',job.id,'activity','btn primary'),
+    running: actionButton('Обновить выпуск · демо','progress',job.id,'activity','btn primary'),
+    done: ''
+  }[job.state];
+  return detailHeading('jobs','Задание '+job.id,badge(jobStates[job.state]))+
+    '<section class="panel detail-panel">'+panelHeading(part.name)+
+    '<div class="detail-data">'+datum('Изделие',goButton(part.product.name,'products',part.product.id))+datum('Деталь','<strong>'+part.id+'</strong>')+
+    datum('Срок','<strong>'+dateLabel(job.due)+'</strong>')+datum('Приоритет','<strong>'+(job.priority==='high'?'Высокий':'Обычный')+'</strong>')+
+    datum('Управляющая программа',goButton(job.program+' · версия '+job.version,'programs',job.program)+'<strong class="code">'+esc(version.file)+'</strong>')+
+    datum('Станок',job.machine?goButton(job.machine,'machines',job.machine):'<strong>Не выбран</strong>')+
+    datum('Выпуск партии','<strong>'+job.done+' из '+job.qty+' шт.</strong>')+'</div>'+
+    '<div class="detail-progress">'+progress('Выпуск партии',job.done,job.qty)+'</div>'+
+    (action?'<div class="detail-actions">'+action+'</div>':'')+'</section>';
+}
+
+function showProduct(id) {
+  const product = products.find(item=>item.id===id);
+  if (!product) return showProducts();
+  const count = productProgress(product);
+  const rows = product.parts.map(part=>{
+    const tally = partProgress(part.id);
+    const current = programById(part.program).versions[0];
+    return '<tr><td><b>'+part.name+'</b><small class="code">'+part.id+'</small></td><td>'+goButton(part.program,'programs',part.program)+'<small>'+esc(current.file)+' · версия '+current.number+'</small></td><td>'+tally.done+' из '+tally.total+' шт.</td><td>'+progress('Выпуск детали '+part.name,tally.done,tally.total)+'</td><td>'+actionButton('В очередь','new-job',part.id,'plus')+'</td></tr>';
+  }).join('');
+  return detailHeading('products',product.name)+'<section class="panel detail-panel">'+panelHeading('Состав изделия','',product.id+' · Выпуск деталей: '+count.done+' из '+count.total+' шт.')+
+    '<div class="detail-progress">'+progress('Выпуск изделия',count.done,count.total)+'</div>'+
+    '<div class="scroller"><table><thead><tr><th>Деталь</th><th>Управляющая программа</th><th>Выпуск по заданиям</th><th>Выполнение</th><th aria-label="Действие"></th></tr></thead><tbody>'+rows+'</tbody></table></div></section>'+
+    '<section class="panel">'+panelHeading('Задания по изделию')+jobsTable(data.jobs.filter(job=>product.parts.some(part=>part.id===job.part)).sort(queueSort))+'</section>';
+}
+
+function showProgram(id) {
+  const program = programById(id);
+  if (!program) return showPrograms();
+  const part = findPart(partByProgram(id).id);
+  return detailHeading('programs','Программа '+id)+
+    '<section class="panel detail-panel">'+panelHeading('Карточка программы',actionButton('Добавить версию','new-version',id,'plus','btn primary'))+
+    '<div class="detail-data">'+datum('Деталь','<strong>'+part.name+'</strong>')+datum('Изделие',goButton(part.product.name,'products',part.product.id))+'</div></section>'+
+    '<section class="panel">'+panelHeading('История версий')+
+    '<div class="scroller"><table><thead><tr><th>Версия</th><th>Файл</th><th>Размер</th><th>Дата</th></tr></thead><tbody>'+
+    program.versions.map((version,index)=>'<tr><td><b>Версия '+version.number+'</b>'+(index===0?'<small>Последняя добавленная</small>':'')+'</td><td class="code">'+esc(version.file)+'</td><td>'+new Intl.NumberFormat('ru',{maximumFractionDigits:1}).format(version.size/1024)+' КБ</td><td>'+dateLabel(version.date)+'</td></tr>').join('')+
+    '</tbody></table></div></section>';
+}
+
+function showMachine(id) {
+  const machine = machines.find(item=>item.id===id);
+  if (!machine) return showMachines();
+  const job = activeJob(id);
+  const state = stateOf(machine);
+  const part = job && findPart(job.part);
+  return detailHeading('machines','Станок '+id,badge(machineStates[state]))+
+    '<section class="panel detail-panel">'+panelHeading('Текущее состояние')+'<div class="detail-data">'+
+    datum('Тип','<strong>'+machine.type+'</strong>')+datum('ПО управления','<strong>Mach3</strong>')+
+    datum('Связь с ПК','<strong>'+(machine.online?'Есть связь':'Нет связи')+'</strong>')+
+    datum('Текущее задание',job?goButton(job.id,'jobs',job.id):'<strong>—</strong>')+
+    (part?datum('Изделие',goButton(part.product.name,'products',part.product.id))+datum('Деталь','<strong>'+part.name+'</strong>')+datum('Выпуск партии','<strong>'+job.done+' из '+job.qty+' шт.</strong>'):'')+
+    '</div>'+(job?'<div class="detail-progress">'+progress('Выпуск партии',job.done,job.qty)+'</div>':'')+'</section>'+
+    '<section class="panel">'+panelHeading('Передачи УП на станок')+journalTable(data.transfers.filter(item=>item.machine===id))+'</section>';
+}
+
+const listViews={overview:showOverview,jobs:showJobs,products:showProducts,programs:showPrograms,machines:showMachines,journal:showJournal};
+const detailViews={jobs:showJob,products:showProduct,programs:showProgram,machines:showMachine};
+
+function render() {
+  document.querySelector('#nav').innerHTML=Object.entries(sections).map(([page,[title,symbol]])=>
+    '<button title="'+title+'" class="nav-btn" data-go="'+page+'" '+(page===route.page?'aria-current="page"':'')+'>'+icon(symbol)+title+'</button>'
+  ).join('');
+  document.querySelector('#crumb-page').textContent=sections[route.page][0];
+  main.innerHTML=route.id&&detailViews[route.page]?detailViews[route.page](route.id):listViews[route.page]();
+  renderResults();
+}
+
+function navigate(page,id='',filter='') {
+  route={page,id:id||null};
+  filters={query:'',state:filter};
+  closeSidebar();
+  render();
+  window.scrollTo(0,0);
+}
+
+function notify(message) {
+  clearTimeout(toastTimer);
+  toast.textContent=message;
+  toast.hidden=false;
+  toastTimer=setTimeout(()=>{toast.hidden=true;},4000);
+}
+
+function openDialog(title,description,body,confirmLabel,onSubmit,style='btn primary') {
+  dialog.innerHTML='<form><div class="dialog-head"><div><h2 id="dialog-title">'+title+'</h2><p>'+description+'</p></div><button type="button" class="icon-btn" data-action="close-dialog" aria-label="Закрыть">'+icon('close')+'</button></div>'+
+    '<div class="dialog-body">'+body+'</div><div class="dialog-actions"><button type="button" class="btn" data-action="close-dialog">Отмена</button>'+
+    (confirmLabel?'<button class="'+style+'" type="submit">'+confirmLabel+'</button>':'')+'</div></form>';
+  dialog.setAttribute('aria-labelledby','dialog-title');
+  dialog.querySelector('form').addEventListener('submit',event=>{
+    event.preventDefault();
+    onSubmit?.(new FormData(event.currentTarget));
+  });
+  dialog.showModal();
+}
+
+function recordEvent(symbol,title,detail,at=localDateTime()) {
+  data.activity.unshift({icon:symbol,title,detail,at});
+}
+
+function closeWithMessage(message) {
+  dialog.close();
+  save();
+  render();
+  notify(message);
+}
+
+function newJob(partId) {
+  const initialPart = findPart(partId);
+  const productOptions = products.map(product=>'<option value="'+product.id+'" '+(product.id===initialPart?.product.id?'selected':'')+'>'+product.name+'</option>').join('');
+  openDialog('Новое задание','Выберите деталь, версию УП и параметры партии.',
+    '<label class="field">Изделие<select name="product">'+productOptions+'</select></label>'+
+    '<label class="field">Деталь<select name="part"></select></label>'+
+    '<label class="field">Версия управляющей программы<select name="version"></select></label>'+
+    '<div class="field-row"><label class="field">Количество, шт.<input class="field-input" name="qty" type="number" min="1" max="1000000" value="10" required></label>'+
+    '<label class="field">Срок<input class="field-input" name="due" type="date" value="'+localDateTime().slice(0,10)+'" required></label></div>'+
+    '<label class="field">Приоритет<select name="priority"><option value="normal">Обычный</option><option value="high">Высокий</option></select></label>',
+    'Поставить в очередь',form=>{
+      const part=findPart(form.get('part'));
+      const number=Math.max(...data.jobs.map(job=>Number(job.id.slice(3))))+1;
+      const id='ПЗ-'+String(number).padStart(3,'0');
+      data.jobs.push({id,part:part.id,program:part.program,version:Number(form.get('version')),qty:Number(form.get('qty')),due:form.get('due'),priority:form.get('priority'),done:0,machine:null,state:'queued'});
+      recordEvent('list','Добавлено задание',id+' · '+part.name);
+      dialog.close();
+      save();
+      navigate('jobs',id);
+      notify('Задание '+id+' добавлено в очередь.');
+    });
+  const productField=dialog.querySelector('[name=product]');
+  const partField=dialog.querySelector('[name=part]');
+  const versionField=dialog.querySelector('[name=version]');
+  function updateVersions() {
+    versionField.innerHTML=programById(findPart(partField.value).program).versions.map(version=>'<option value="'+version.number+'">Версия '+version.number+' · '+esc(version.file)+'</option>').join('');
+  }
+  function updateParts(selected='') {
+    const product=products.find(item=>item.id===productField.value);
+    partField.innerHTML=product.parts.map(part=>'<option value="'+part.id+'" '+(part.id===selected?'selected':'')+'>'+part.name+'</option>').join('');
+    updateVersions();
+  }
+  productField.addEventListener('change',()=>updateParts());
+  partField.addEventListener('change',updateVersions);
+  updateParts(partId);
+}
+
+function assignJob(job) {
+  if (job.state!=='queued') return;
+  const version=versionOf(job.program,job.version);
+  const available=machines.filter(machine=>stateOf(machine)==='ready');
+  const choices=machines.map(machine=>'<option value="'+machine.id+'" '+(stateOf(machine)!=='ready'?'disabled':'')+(machine.id===available[0]?.id?' selected':'')+'>'+machine.id+' · '+machine.type+' · '+machineStates[stateOf(machine)][0]+'</option>').join('');
+  openDialog('Передача управляющей программы','Задание '+job.id+' · '+findPart(job.part).name,
+    '<div class="notice"><strong>'+esc(version.file)+'</strong><br>'+job.program+' · версия '+version.number+'</div>'+
+    (available.length?'<label class="field">Станок-получатель<select name="machine" required>'+choices+'</select></label><p class="muted">Демонстрация передачи файла в папку станка. Статус обработки меняется отдельным действием.</p>':'<p class="muted">Сейчас свободных станков нет.</p>'),
+    available.length?'Имитировать передачу':'',form=>{
+      const machine=available.find(item=>item.id===form.get('machine'));
+      if (!machine || stateOf(machine)!=='ready') return;
+      const at=localDateTime();
+      job.machine=machine.id;
+      job.state='assigned';
+      data.transfers.unshift({job:job.id,machine:machine.id,program:job.program,version:job.version,file:version.file,at});
+      recordEvent('send','Передана управляющая программа',job.id+' · '+machine.id+' · версия '+job.version,at);
+      closeWithMessage('Передача на '+machine.id+' записана в журнал.');
+    });
+}
+
+function startJob(job) {
+  if (job.state!=='assigned') return;
+  openDialog('Начало обработки в деморежиме','Задание '+job.id+' · '+job.machine,
+    '<p class="notice">В макете это имитирует получение статуса «В работе» от ПК станка.</p>',
+    'Обновить статус',()=>{
+      job.state='running';
+      recordEvent('activity','Начата обработка',job.id+' · '+job.machine);
+      closeWithMessage('Задание переведено в работу.');
+    });
+}
+
+function updateProgress(job) {
+  if (job.state!=='running') return;
+  openDialog('Обновление выпуска в деморежиме','Задание '+job.id+' · '+job.machine,
+    '<label class="field">Выполнено, шт. из '+job.qty+'<input type="number" name="done" class="field-input" value="'+Math.min(job.qty,job.done+1)+'" min="'+job.done+'" max="'+job.qty+'" required></label>',
+    'Сохранить выпуск',form=>{
+      job.done=Number(form.get('done'));
+      if (job.done===job.qty) {
+        job.state='done';
+        recordEvent('check','Задание выполнено',job.id+' · '+findPart(job.part).name+' · '+job.done+' из '+job.qty+' шт.');
+      } else {
+        recordEvent('activity','Обновлён выпуск',job.id+' · '+job.done+' из '+job.qty+' шт.');
+      }
+      closeWithMessage('Выпуск обновлён.');
+    });
+}
+
+function newVersion(id) {
+  const program=programById(id);
+  const number=program.versions[0].number+1;
+  openDialog('Добавить версию УП',program.id+' · версия '+number,
+    '<label class="field">Файл управляющей программы<input class="field-input" type="file" name="file" accept=".nc,.tap,.gcode,.txt" required></label>'+
+    '<p class="notice">Макет сохраняет в браузере имя, размер и номер версии файла.</p>',
+    'Добавить версию',form=>{
+      const file=form.get('file');
+      if (!/\.(nc|tap|gcode|txt)$/i.test(file.name) || file.size===0) {
+        const input=dialog.querySelector('[name=file]');
+        input.setCustomValidity('Выберите непустой файл .nc, .tap, .gcode или .txt.');
+        input.reportValidity();
+        return;
+      }
+      program.versions.unshift({number,file:file.name,size:file.size,date:localDateTime().slice(0,10)});
+      recordEvent('file','Добавлена версия УП',id+' · версия '+number);
+      closeWithMessage('Версия '+number+' добавлена.');
+    });
+  dialog.querySelector('[name=file]').addEventListener('change',event=>event.target.setCustomValidity(''));
+}
+
+function demoOptions() {
+  openDialog('Демонстрационный режим','В интерфейсе используются условные изделия, задания и станки.',
+    '<p class="notice">Действия сохраняются в этом браузере. Передачи файлов и показания станков имитируются.</p>',
+    'Сбросить демоданные',()=>{
+      data=demoData();
+      save();
+      dialog.close();
+      navigate('overview');
+      notify('Исходные демоданные восстановлены.');
+    },'btn danger');
+}
+
+function closeSidebar() {
+  document.querySelector('#sidebar').classList.remove('open');
+  document.querySelector('#mobile-menu').setAttribute('aria-expanded','false');
+}
+
+document.addEventListener('click',event=>{
+  const button=event.target.closest('button');
+  if (!button) return;
+  const {go,id,filter,action}=button.dataset;
+  if (go) navigate(go,id,filter);
+  if (!action) return;
+  const job=data.jobs.find(item=>item.id===id);
+  switch (action) {
+    case 'new-job': newJob(id); break;
+    case 'assign': assignJob(job); break;
+    case 'simulate-start': startJob(job); break;
+    case 'progress': updateProgress(job); break;
+    case 'new-version': newVersion(id); break;
+    case 'demo': demoOptions(); break;
+    case 'close-dialog': dialog.close(); break;
+  }
+});
+main.addEventListener('input',event=>{
+  if (event.target.id==='query-filter') {
+    filters.query=event.target.value;
+    renderResults();
+  }
+});
+main.addEventListener('change',event=>{
+  if (event.target.id==='state-filter') {
+    filters.state=event.target.value;
+    renderResults();
+  }
+});
+document.querySelector('#mobile-menu').addEventListener('click',event=>{
+  const open=document.querySelector('#sidebar').classList.toggle('open');
+  event.currentTarget.setAttribute('aria-expanded',String(open));
+});
+document.addEventListener('keydown',event=>{
+  if (event.key==='Escape'&&!dialog.open) closeSidebar();
+});
+document.querySelector('#brand-icon').innerHTML=icon('brand');
+document.querySelector('#crumb-icon').innerHTML=icon('area');
+document.querySelector('#mobile-menu').innerHTML=icon('menu');
+document.querySelector('#demo-button').innerHTML=icon('flask')+'Демо-режим';
+render();
+</script>
+</body>
+</html>
