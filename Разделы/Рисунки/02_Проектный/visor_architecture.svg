@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="726" viewBox="0 0 820 726" role="img" aria-labelledby="title description">
+  <title id="title">Архитектура VISOR и взаимодействие с рабочим местом станка</title>
+  <desc id="description">Браузер взаимодействует с сервером VISOR, который работает с базой данных и хранилищем программ. Сервер размещает выбранную редакцию на ресурсе Samba. Оператор копирует файл на управляющий компьютер и открывает его в Mach3. Агент считывает состояние Mach3 и передаёт сведения серверу. Mach3 управляет станком через LPT.</desc>
+
+  <rect width="820" height="726" fill="#fff"/>
+  <g stroke="#4b4b4b" stroke-width="1.6">
+    <rect x="32" y="354" width="756" height="246" rx="7" fill="#f4f4f4" stroke-dasharray="4 4"/>
+    <rect x="53" y="401" width="714" height="177" rx="5" fill="#fff"/>
+  </g>
+
+  <g fill="#fff" stroke="#252525" stroke-width="1.8">
+    <rect x="292" y="22" width="236" height="48" rx="5"/>
+    <rect x="289" y="122" width="242" height="56" rx="5" fill="#eeeeee"/>
+    <rect x="44" y="122" width="182" height="56" rx="5"/>
+    <rect x="594" y="122" width="182" height="56" rx="5"/>
+    <rect x="42" y="247" width="206" height="56" rx="5"/>
+    <rect x="67" y="475" width="192" height="56" rx="5"/>
+    <rect x="315" y="475" width="190" height="56" rx="5"/>
+    <rect x="563" y="475" width="190" height="56" rx="5"/>
+    <rect x="301" y="657" width="218" height="48" rx="5"/>
+  </g>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g id="application-links" stroke="#454545" stroke-width="1.8">
+      <path d="M410 72 V120 M404 80 L410 72 L416 80 M404 112 L410 120 L416 112"/>
+      <path d="M228 150 H287 M236 144 L228 150 L236 156 M279 144 L287 150 L279 156"/>
+      <path d="M533 150 H592 M541 144 L533 150 L541 156 M584 144 L592 150 L584 156"/>
+    </g>
+    <g id="file-delivery" stroke="#244760" stroke-width="2.2">
+      <path d="M350 180 V219 H145 V245 M139 237 L145 245 L151 237"/>
+      <path d="M145 305 V473 M139 465 L145 473 L151 465"/>
+      <path d="M261 503 H313 M305 497 L313 503 L305 509"/>
+    </g>
+    <g id="monitoring" stroke="#31564f" stroke-width="2.2">
+      <path d="M507 503 H561 M658 473 V219 H471 V180" stroke-dasharray="6 4"/>
+      <path d="M553 497 L561 503 L553 509 M465 188 L471 180 L477 188"/>
+    </g>
+    <g id="machine-control" stroke="#252525" stroke-width="3.1">
+      <path d="M410 533 V655 M402 645 L410 655 L418 645"/>
+    </g>
+  </g>
+
+  <g fill="#151515" font-family="DejaVu Sans, Arial, sans-serif" font-size="19" text-anchor="middle">
+    <text x="410" y="53">Браузер пользователя</text>
+    <text x="410" y="157" font-weight="bold">Сервер VISOR</text>
+    <text x="135" y="157">База данных</text>
+    <text x="685" y="146"><tspan x="685">Хранилище</tspan><tspan x="685" y="167">программ</tspan></text>
+    <text x="145" y="271"><tspan x="145">Сетевой ресурс</tspan><tspan x="145" y="292">Samba</tspan></text>
+    <text x="410" y="384" font-weight="bold">Изолированный сетевой сегмент станков</text>
+    <text x="410" y="431" font-weight="bold">Управляющий компьютер · Windows XP</text>
+    <text x="163" y="499"><tspan x="163">Локальная копия</tspan><tspan x="163" y="520">программы</tspan></text>
+    <text x="410" y="510" font-weight="bold">Mach3</text>
+    <text x="658" y="499"><tspan x="658">Агент</tspan><tspan x="658" y="520">мониторинга</tspan></text>
+    <text x="410" y="688" font-weight="bold">Станок с ЧПУ</text>
+  </g>
+
+  <g font-family="DejaVu Sans, Arial, sans-serif" font-size="17">
+    <text x="424" y="102" fill="#3b3b3b">Запросы и ответы</text>
+    <text x="247" y="207" fill="#244760" text-anchor="middle">Размещение файла</text>
+    <text x="158" y="333" fill="#244760">Копирование оператором</text>
+    <text x="485" y="207" fill="#31564f">Сведения о состоянии</text>
+    <text x="533" y="462" fill="#31564f" text-anchor="middle">Чтение состояния</text>
+    <text x="425" y="635" fill="#252525">LPT · сигналы STEP/DIR</text>
+  </g>
+</svg>
