@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="680" viewBox="0 0 620 680" role="img" aria-labelledby="title description">
+  <title id="title">Алгоритм подтверждения выпуска и расчёта готовности</title>
+  <desc id="description">Сервер проверяет запрос и сверяет введённое количество с предыдущим подтверждением. Принятое значение сохраняется и используется для расчёта готовности. При достижении плана задание и назначение завершаются.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#252525"/>
+    </marker>
+  </defs>
+  <rect width="620" height="680" fill="#fff"/>
+  <g fill="#fff" stroke="#252525" stroke-width="1.7" stroke-linejoin="round">
+    <rect x="156" y="14" width="128" height="38" rx="19" fill="#eee"/>
+    <path d="M90 74 H368 L350 124 H72 Z"/>
+    <rect x="56" y="146" width="328" height="56"/>
+    <path d="M220 226 L382 274 L220 322 L58 274 Z" fill="#f5f5f5"/>
+    <rect x="424" y="248" width="165" height="52"/>
+    <rect x="56" y="346" width="328" height="54"/>
+    <path d="M220 422 L354 461 L220 500 L86 461 Z" fill="#f5f5f5"/>
+    <rect x="56" y="518" width="328" height="44"/>
+    <path d="M77 582 H384 L363 619 H56 Z"/>
+    <rect x="156" y="630" width="128" height="38" rx="19" fill="#eee"/>
+  </g>
+  <g fill="none" stroke="#252525" stroke-width="1.7" stroke-linejoin="round" marker-end="url(#arrow)">
+    <path d="M220 52 V74"/>
+    <path d="M220 124 V146"/>
+    <path d="M220 202 V226"/>
+    <path d="M382 274 H424"/>
+    <path d="M589 274 H605 V649 H284"/>
+    <path d="M220 322 V346"/>
+    <path d="M220 400 V422"/>
+    <path d="M354 461 H446 V600 H374"/>
+    <path d="M220 500 V518"/>
+    <path d="M220 562 V582"/>
+    <path d="M220 619 V630"/>
+  </g>
+  <g fill="#222" font-family="Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="middle">
+    <text x="220" y="39">Начало</text>
+    <text x="220" y="95">Задание и накопленное</text>
+    <text x="220" y="116">количество деталей</text>
+    <text x="220" y="170">Проверить доступ и назначение</text>
+    <text x="220" y="191">и сверить накопленный выпуск</text>
+    <text x="220" y="280">Подтверждение допустимо?</text>
+    <text x="506.5" y="270">Отклонить</text>
+    <text x="506.5" y="291">запрос</text>
+    <text x="220" y="368">Сохранить подтверждение</text>
+    <text x="220" y="389">и рассчитать готовность</text>
+    <text x="220" y="467">План достигнут?</text>
+    <text x="220" y="546">Завершить задание и назначение</text>
+    <text x="220" y="606">Отобразить готовность партии</text>
+    <text x="220" y="655">Конец</text>
+  </g>
+  <g fill="#222" font-family="Liberation Sans, Arial, sans-serif" font-size="15">
+    <text x="389" y="265">Нет</text>
+    <text x="229" y="340">Да</text>
+    <text x="374" y="452">Нет</text>
+    <text x="229" y="514">Да</text>
+  </g>
+</svg>

@@ -1,0 +1,171 @@
+Enum role_code {
+  technologist
+  operator
+  administrator
+}
+
+Enum assignment_status {
+  active
+  completed
+}
+
+Enum transfer_result {
+  success
+  failure
+}
+
+Enum production_event_type {
+  assigned
+  file_delivered
+  program_opened
+  processing_started
+  processing_completed
+  output_confirmed
+}
+
+Table products {
+  id bigint [pk]
+  code text [not null, unique]
+  name text [not null]
+
+  Note: 'Изделие включает одну или несколько деталей.'
+}
+
+Table parts {
+  id bigint [pk]
+  product_id bigint [not null, ref: > products.id]
+  code text [not null]
+  name text [not null]
+  quantity_per_product integer [not null, check: `quantity_per_product > 0`]
+}
+
+Table technological_operations {
+  id bigint [pk]
+  part_id bigint [not null, ref: > parts.id]
+  name text [not null]
+}
+
+Table cnc_programs {
+  id bigint [pk]
+  part_id bigint [not null, ref: > parts.id]
+  operation_id bigint [null, ref: > technological_operations.id]
+  code text [not null, unique]
+
+  Note: 'Если указана операция, она должна относиться к той же детали, что и программа.'
+}
+
+Table program_revisions {
+  id bigint [pk]
+  program_id bigint [not null, ref: > cnc_programs.id]
+  revision_number integer [not null, check: `revision_number > 0`]
+  file_key text [not null, unique, note: 'Ключ файла в централизованном хранилище']
+  checksum text [not null]
+  uploaded_by bigint [not null, ref: > user_accounts.id]
+  uploaded_at timestamp [not null]
+  is_current boolean [not null]
+
+  indexes {
+    (program_id, revision_number) [unique]
+  }
+
+  Note: 'У программы может быть не более одной актуальной редакции. Файл и контрольная сумма опубликованной редакции, связанной с выполняемым или завершённым заданием, сохраняются.'
+}
+
+Table production_jobs {
+  id bigint [pk]
+  part_id bigint [not null, ref: > parts.id]
+  selected_revision_id bigint [not null, ref: > program_revisions.id]
+  planned_quantity integer [not null, check: `planned_quantity > 0`]
+  due_date date [not null]
+  status text [not null]
+
+  Note: 'Задание задаёт выпуск партии одной детали. Выбранная редакция должна принадлежать программе для этой детали.'
+}
+
+Table machines {
+  id bigint [pk]
+  code text [not null, unique]
+  delivery_directory text [not null, note: 'Сетевой каталог выдачи управляющих программ']
+}
+
+Table job_assignments {
+  id bigint [pk]
+  job_id bigint [not null, ref: > production_jobs.id]
+  machine_id bigint [not null, ref: > machines.id]
+  queue_position integer [not null, check: `queue_position > 0`]
+  assigned_at timestamp [not null]
+  status assignment_status [not null]
+
+  Note: 'У задания может быть не более одного действующего назначения. Позиция в очереди уникальна среди действующих назначений одного станка.'
+}
+
+Table file_transfer_attempts {
+  id bigint [pk]
+  assignment_id bigint [not null, ref: > job_assignments.id]
+  revision_id bigint [not null, ref: > program_revisions.id]
+  registered_at timestamp [not null]
+  result transfer_result [not null]
+  delivery_path text [null]
+
+  checks {
+    `result <> 'success' OR delivery_path IS NOT NULL`
+  }
+
+  Note: 'Каждая попытка, включая повторную, сохраняется отдельной записью со ссылкой на редакцию, выбранную на момент выдачи.'
+}
+
+Table production_events {
+  id bigint [pk]
+  job_id bigint [not null, ref: > production_jobs.id]
+  assignment_id bigint [null, ref: > job_assignments.id]
+  event_type production_event_type [not null]
+  registered_at timestamp [not null]
+  author_id bigint [null, ref: > user_accounts.id]
+  confirmed_quantity integer [null, check: `confirmed_quantity >= 0`, note: 'Накопленный выпуск по заданию']
+
+  checks {
+    `(event_type = 'output_confirmed' AND assignment_id IS NOT NULL AND author_id IS NOT NULL AND confirmed_quantity IS NOT NULL) OR (event_type <> 'output_confirmed' AND confirmed_quantity IS NULL)`
+  }
+
+  Note: 'Если указано назначение, оно должно относиться к этому же заданию. Фактическое количество берётся из последнего зарегистрированного подтверждения. До первого подтверждения оно равно нулю.'
+}
+
+Table machine_observations {
+  id bigint [pk]
+  machine_id bigint [not null, ref: > machines.id]
+  state_code text [not null]
+  source text [not null]
+  received_at timestamp [not null]
+}
+
+Table roles {
+  id bigint [pk]
+  code role_code [not null, unique]
+}
+
+Table user_accounts {
+  id bigint [pk]
+  username text [not null, unique]
+  role_id bigint [not null, ref: > roles.id]
+  is_active boolean [not null]
+}
+
+Table operator_machine_access {
+  operator_id bigint [not null, ref: > user_accounts.id]
+  machine_id bigint [not null, ref: > machines.id]
+
+  indexes {
+    (operator_id, machine_id) [pk]
+  }
+
+  Note: 'Допуск выдаётся учётной записи с ролью оператора и ограничивает доступ к заданиям разрешённых станков.'
+}
+
+Table audit_entries {
+  id bigint [pk]
+  user_id bigint [not null, ref: > user_accounts.id]
+  action_code text [not null]
+  object_type text [not null]
+  object_key text [not null, note: 'Простой или составной ключ записи указанного типа']
+  registered_at timestamp [not null]
+}

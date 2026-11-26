@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="527" viewBox="0 0 620 527" role="img" aria-labelledby="title description">
+  <title id="title">Алгоритм формирования очереди станка</title>
+  <desc id="description">Сервер проверяет возможность назначения задания, определяет следующую позицию очереди и сохраняет назначение. Если проверка не пройдена, сервер отклоняет запрос.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#252525"/>
+    </marker>
+  </defs>
+  <rect width="620" height="527" fill="#fff"/>
+  <g fill="#fff" stroke="#252525" stroke-width="1.7" stroke-linejoin="round">
+    <rect x="166" y="14" width="128" height="38" rx="19" fill="#eee"/>
+    <path d="M115 76 H363 L345 124 H97 Z"/>
+    <path d="M230 148 L396 194 L230 240 L64 194 Z" fill="#f5f5f5"/>
+    <rect x="434" y="170" width="160" height="48"/>
+    <rect x="68" y="267" width="324" height="54"/>
+    <rect x="68" y="347" width="324" height="54"/>
+    <path d="M115 427 H363 L345 465 H97 Z"/>
+    <rect x="166" y="477" width="128" height="38" rx="19" fill="#eee"/>
+  </g>
+  <g fill="none" stroke="#252525" stroke-width="1.7" stroke-linejoin="round" marker-end="url(#arrow)">
+    <path d="M230 52 V76"/>
+    <path d="M230 124 V148"/>
+    <path d="M396 194 H434"/>
+    <path d="M514 218 V496 H294"/>
+    <path d="M230 240 V267"/>
+    <path d="M230 321 V347"/>
+    <path d="M230 401 V427"/>
+    <path d="M230 465 V477"/>
+  </g>
+  <g fill="#222" font-family="Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="middle">
+    <text x="230" y="39">Начало</text>
+    <text x="230" y="96">Задание и станок,</text>
+    <text x="230" y="116">выбранные технологом</text>
+    <text x="230" y="200">Назначение допустимо?</text>
+    <text x="514" y="190">Отклонить</text>
+    <text x="514" y="210">запрос</text>
+    <text x="230" y="289">Определить позицию в очереди</text>
+    <text x="230" y="310">1 либо максимальная позиция + 1</text>
+    <text x="230" y="369">Сохранить назначение</text>
+    <text x="230" y="390">и зарегистрировать событие</text>
+    <text x="230" y="452">Позиция нового назначения</text>
+    <text x="230" y="502">Конец</text>
+  </g>
+  <g fill="#222" font-family="Liberation Sans, Arial, sans-serif" font-size="15">
+    <text x="401" y="185">Нет</text>
+    <text x="239" y="259">Да</text>
+  </g>
+</svg>
