@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="704" viewBox="0 0 820 704" role="img" aria-labelledby="title description">
+  <title id="title">Диаграмма вариантов использования VISOR</title>
+  <desc id="description">Технолог ведёт справочники и редакции программ, назначает задания, выдаёт файлы и контролирует выполнение. Оператор получает задание и файл. Обе роли могут подтвердить выпуск. Администратор управляет пользователями и оборудованием, просматривает журнал аудита.</desc>
+  <rect width="820" height="704" fill="#fff"/>
+  <rect x="190" y="16" width="440" height="668" fill="#fff" stroke="#252525" stroke-width="2"/>
+
+  <g fill="none" stroke="#454545" stroke-width="1.7" stroke-linecap="round">
+    <g id="technologist-associations">
+      <path d="M131 246 L234 84 M131 246 L234 145 M131 246 L234 206 M131 246 L234 267 M131 246 L234 328 M131 246 L234 450"/>
+    </g>
+    <g id="operator-associations">
+      <path d="M692 419 L586 389 M692 419 L586 450"/>
+    </g>
+    <g id="administrator-associations">
+      <path d="M692 574 L586 511 M692 574 L586 572 M692 574 L586 633"/>
+    </g>
+  </g>
+
+  <g fill="#fff" stroke="#252525" stroke-width="1.8">
+    <ellipse cx="410" cy="84" rx="176" ry="25"/>
+    <ellipse cx="410" cy="145" rx="176" ry="25"/>
+    <ellipse cx="410" cy="206" rx="176" ry="28"/>
+    <ellipse cx="410" cy="267" rx="176" ry="25"/>
+    <ellipse cx="410" cy="328" rx="176" ry="28"/>
+    <ellipse cx="410" cy="389" rx="176" ry="28"/>
+    <ellipse cx="410" cy="450" rx="176" ry="25"/>
+    <ellipse cx="410" cy="511" rx="176" ry="28"/>
+    <ellipse cx="410" cy="572" rx="176" ry="28"/>
+    <ellipse cx="410" cy="633" rx="176" ry="25"/>
+  </g>
+
+  <g fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <g id="technologist">
+      <circle cx="110" cy="220" r="11"/>
+      <path d="M110 231 V265 M89 246 H131 M93 283 L110 265 L127 283"/>
+    </g>
+    <g id="operator">
+      <circle cx="713" cy="393" r="11"/>
+      <path d="M713 404 V438 M692 419 H734 M696 456 L713 438 L730 456"/>
+    </g>
+    <g id="administrator">
+      <circle cx="713" cy="548" r="11"/>
+      <path d="M713 559 V593 M692 574 H734 M696 611 L713 593 L730 611"/>
+    </g>
+  </g>
+
+  <g fill="#151515" font-family="DejaVu Sans, Arial, sans-serif" font-size="19" text-anchor="middle">
+    <text x="410" y="46" font-size="23" font-weight="bold">VISOR</text>
+    <text x="410" y="91">Вести изделия и детали</text>
+    <text x="410" y="152">Вести редакции программ</text>
+    <text x="410" y="203"><tspan x="410">Формировать очередь</tspan><tspan x="410" y="222">и назначать задания</tspan></text>
+    <text x="410" y="274">Выдать редакцию программы</text>
+    <text x="410" y="325"><tspan x="410">Просматривать ход работ</tspan><tspan x="410" y="344">и состояние станков</tspan></text>
+    <text x="410" y="386"><tspan x="410">Получить назначенное</tspan><tspan x="410" y="405">задание и файл</tspan></text>
+    <text x="410" y="457">Подтвердить выпуск</text>
+    <text x="410" y="508"><tspan x="410">Управлять учётными</tspan><tspan x="410" y="527">записями и ролями</tspan></text>
+    <text x="410" y="569"><tspan x="410">Вести перечень станков</tspan><tspan x="410" y="588">и данные подключения</tspan></text>
+    <text x="410" y="640">Просматривать журнал аудита</text>
+    <text x="110" y="310">Технолог</text>
+    <text x="713" y="483">Оператор</text>
+    <text x="713" y="638">Администратор</text>
+  </g>
+</svg>
